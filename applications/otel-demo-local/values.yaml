@@ -17,34 +17,7 @@ opensearch:
 
 components:
   flagd:
-    # The upstream arm64 flagd UI repeatedly exhausts its memory limit while
-    # starting its Erlang VM on the local kind node. Pin only this sidecar to
-    # the upstream amd64 manifest; Colima provides x86_64 emulation. The
-    # emulated process needs more memory than it does on a native amd64 node.
-    sidecarContainers:
-      - name: flagd-ui
-        imageOverride:
-          repository: ghcr.io/open-telemetry/demo
-          tag: 2.1.3-flagd-ui@sha256:b484d4cb20af0c6f508fcfcce144dc52f5849668bbc8461c1bfd7869122c94af
-          pullPolicy: IfNotPresent
-        useDefault:
-          env: true
-        service:
-          port: 4000
-        env:
-          - name: FLAGD_METRICS_EXPORTER
-            value: otel
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4318
-          - name: FLAGD_UI_PORT
-            value: "4000"
-          - name: SECRET_KEY_BASE
-            value: yYrECL4qbNwleYInGJYvVnSkwJuSQJ4ijPTx5tirGUXrbznFIBFVJdPl5t6O9ASw
-          - name: PHX_HOST
-            value: localhost
-        resources:
-          limits:
-            memory: 768Mi
-        volumeMounts:
-          - name: config-rw
-            mountPath: /app/data
+    # The optional 2.1.3 flag editor UI grows until OOM on the local arm64
+    # environment, both natively and through amd64 emulation. Keep the flagd
+    # evaluation service and manage its flag document declaratively instead.
+    sidecarContainers: []
