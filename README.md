@@ -1,8 +1,8 @@
-# ot-demo-gitops
+# otel-demo-gitops
 
 ## Overview
 
-`ot-demo-gitops` is the GitOps repository for the OpenTelemetry Demo Kubernetes deployment running on Amazon EKS.
+`otel-demo-gitops` is the GitOps repository for the OpenTelemetry Demo Kubernetes deployment running on Amazon EKS.
 
 This repository defines the **desired state** of Kubernetes applications.
 
@@ -23,7 +23,7 @@ Instead of Terraform directly managing application workloads, Argo CD continuous
 ┌─────────────────────────────┐
 │ GitHub Repository           │
 │                             │
-│ ot-demo-gitops              │
+│ otel-demo-gitops              │
 │                             │
 │ Argo CD manifests           │
 │ Helm values                 │
@@ -51,7 +51,7 @@ Instead of Terraform directly managing application workloads, Argo CD continuous
 # Repository Structure
 
 ```
-ot-demo-gitops/
+otel-demo-gitops/
 
 ├── argocd/
 │   └── applications/

@@ -20,7 +20,7 @@ spec:
         - $values/applications/otel-demo/values.yaml
 
 
-  - repoURL: https://github.com/lackito/ot-demo-gitops.git
+  - repoURL: https://github.com/lackito/otel-demo-gitops.git
     targetRevision: main
     ref: values
 
