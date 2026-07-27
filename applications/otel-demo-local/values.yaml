@@ -19,7 +19,8 @@ components:
   flagd:
     # The upstream arm64 flagd UI repeatedly exhausts its memory limit while
     # starting its Erlang VM on the local kind node. Pin only this sidecar to
-    # the upstream amd64 manifest; Colima provides x86_64 emulation.
+    # the upstream amd64 manifest; Colima provides x86_64 emulation. The
+    # emulated process needs more memory than it does on a native amd64 node.
     sidecarContainers:
       - name: flagd-ui
         imageOverride:
@@ -43,7 +44,7 @@ components:
             value: localhost
         resources:
           limits:
-            memory: 400Mi
+            memory: 768Mi
         volumeMounts:
           - name: config-rw
             mountPath: /app/data
