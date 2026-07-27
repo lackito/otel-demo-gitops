@@ -17,9 +17,9 @@ opensearch:
 
 components:
   flagd:
-    # The flagd UI was OOMKilled at both the upstream 250Mi limit and 400Mi
-    # on the local arm64 cluster. Keep the upstream sidecar configuration
-    # and raise only its memory allocation.
+    # The flagd UI's Erlang VM used approximately 784Mi during startup on
+    # the local arm64 cluster. Keep the upstream sidecar configuration and
+    # give that container enough startup headroom without changing AWS.
     sidecarContainers:
       - name: flagd-ui
         useDefault:
@@ -39,7 +39,7 @@ components:
             value: localhost
         resources:
           limits:
-            memory: 768Mi
+            memory: 1Gi
         volumeMounts:
           - name: config-rw
             mountPath: /app/data
