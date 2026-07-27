@@ -16,6 +16,14 @@ opensearch:
   enabled: false
 
 components:
+  recommendation:
+    # Local development progression: build from otel-demo-apps, tag with its
+    # Git revision, and load directly into kind before updating this value.
+    imageOverride:
+      repository: otel-demo/recommendation
+      tag: local-939117adf132
+      pullPolicy: IfNotPresent
+
   flagd:
     # The optional 2.1.3 flag editor UI grows until OOM on the local arm64
     # environment, both natively and through amd64 emulation. Keep the flagd
