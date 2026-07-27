@@ -1,0 +1,17 @@
+opentelemetry-collector:
+  enabled: true
+  mode: deployment
+  replicaCount: 1
+
+jaeger:
+  enabled: true
+
+prometheus:
+  enabled: true
+
+grafana:
+  enabled: true
+
+opensearch:
+  enabled: false
+
