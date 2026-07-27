@@ -38,7 +38,7 @@ grafana:
         memory: 128Mi
   resources:
     limits:
-      memory: 256Mi
+      memory: 384Mi
 
 opensearch:
   enabled: false
