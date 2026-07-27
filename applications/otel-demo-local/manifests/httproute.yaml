@@ -7,7 +7,9 @@ metadata:
 
 spec:
   parentRefs:
-    - name: otel-demo
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: otel-demo
       sectionName: http
 
   hostnames:
@@ -20,5 +22,8 @@ spec:
             value: /
 
       backendRefs:
-        - name: frontend-proxy
+        - group: ""
+          kind: Service
+          name: frontend-proxy
           port: 8080
+          weight: 1
