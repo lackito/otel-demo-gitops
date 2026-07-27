@@ -2,15 +2,43 @@ opentelemetry-collector:
   enabled: true
   mode: deployment
   replicaCount: 1
+  resources:
+    limits:
+      memory: 300Mi
 
 jaeger:
   enabled: true
+  # In-memory trace storage grew to the upstream 400Mi limit under the
+  # continuous local load generator. Retain fewer traces and leave measured
+  # runtime headroom without changing the AWS environment.
+  allInOne:
+    args:
+      - --memory.max-traces=2000
+      - --query.base-path=/jaeger/ui
+      - --prometheus.server-url=http://prometheus:9090
+      - --prometheus.query.normalize-calls=true
+      - --prometheus.query.normalize-duration=true
+    resources:
+      limits:
+        memory: 512Mi
 
 prometheus:
   enabled: true
+  server:
+    resources:
+      limits:
+        memory: 512Mi
 
 grafana:
   enabled: true
+  sidecar:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+  resources:
+    limits:
+      memory: 256Mi
 
 opensearch:
   enabled: false
