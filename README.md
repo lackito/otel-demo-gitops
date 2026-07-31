@@ -377,6 +377,31 @@ Expected:
 Running
 ```
 
+## Validate the AWS GitOps delivery trail
+
+For a Recommendation release from `otel-demo-apps/main`, verify all three
+systems:
+
+1. In **otel-demo-apps → Actions**, open **Release recommendation service**
+   and confirm the ECR push and GitOps update steps succeeded.
+2. In this repository, confirm that CI created a commit named
+   `chore(recommendation): deploy <commit-sha>` and changed only
+   `applications/otel-demo/values.yaml`:
+
+   ```bash
+   git fetch origin main
+   git log --oneline -3 origin/main -- applications/otel-demo/values.yaml
+   git show origin/main:applications/otel-demo/values.yaml
+   ```
+
+3. In the AWS Argo CD GUI, open `otel-demo`, refresh it, and verify the
+   application moves back to `Synced` and `Healthy`. Inspect **History and
+   Rollback** and the Recommendation Deployment to confirm the ECR image tag
+   matches the application commit SHA.
+
+This AWS audit trail is separate from the local one: no local release should
+create a commit in `otel-demo-gitops`.
+
 ---
 
 # Relationship With Terraform
