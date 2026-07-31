@@ -8,6 +8,20 @@ This repository defines the **desired state** of Kubernetes applications.
 
 Instead of Terraform directly managing application workloads, Argo CD continuously monitors this repository and synchronizes changes into the Kubernetes cluster.
 
+## Environment boundary
+
+This repository is AWS-only:
+
+- the Argo CD instance running in Amazon EKS watches this repository;
+- `applications/otel-demo/values.yaml` contains AWS and ECR configuration;
+- `argocd/applications/otel-demo.yaml` registers the AWS application;
+- no local kind cluster watches this repository.
+
+The standalone local environment keeps its desired state under
+`gitops/otel-demo` in the separate `otel-demo-local` repository. Local values,
+Gateway resources, and a local Argo CD Application definition should not be
+added here.
+
 ---
 
 # Architecture
@@ -83,6 +97,7 @@ It does **not** manage:
 - IAM resources
 - ECR repositories
 - Kubernetes platform components
+- local kind workloads or local Kubernetes configuration
 
 Those responsibilities belong to Terraform repositories.
 
