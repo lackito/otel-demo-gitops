@@ -14,13 +14,15 @@ This repository is AWS-only:
 
 - the Argo CD instance running in Amazon EKS watches this repository;
 - `applications/otel-demo/values.yaml` contains AWS and ECR configuration;
-- `argocd/applications/otel-demo.yaml` registers the AWS application;
+- `argocd/applications/otel-demo.yaml` keeps the declarative AWS Application
+  definition with the GitOps desired state;
+- Terraform in `otel-demo-infra-aws/terraform/04-applications` registers that
+  Application with the cluster;
 - no local kind cluster watches this repository.
 
-The standalone local environment keeps its desired state under
-`gitops/otel-demo` in the separate `otel-demo-local` repository. Local values,
-Gateway resources, and a local Argo CD Application definition should not be
-added here.
+The standalone local environment keeps its desired state in the separate
+`otel-demo-gitops-local` repository. Local values and Gateway resources should
+not be added here.
 
 ---
 
@@ -66,7 +68,6 @@ added here.
 
 ```
 otel-demo-gitops/
-
 ├── argocd/
 │   └── applications/
 │       └── otel-demo.yaml
@@ -136,13 +137,14 @@ Amazon EKS
 
 # Argo CD Application
 
-The main deployment entry point:
+The declarative definition lives at:
 
-```
+```text
 argocd/applications/otel-demo.yaml
 ```
 
-Example:
+The Terraform application stage in `otel-demo-infra-aws` performs cluster
+registration. The Application references:
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -159,8 +161,6 @@ spec:
     server: https://kubernetes.default.svc
     namespace: opentelemetry-demo
 ```
-
-The Application references:
 
 1. OpenTelemetry Demo Helm chart
 
