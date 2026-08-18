@@ -17,12 +17,12 @@ spec:
 
     helm:
       valueFiles:
-        - $values/applications/otel-demo/values.yaml
+        - $myGitOpsRepoRoot/applications/otel-demo/values.yaml
 
 
   - repoURL: https://github.com/lackito/otel-demo-gitops.git
     targetRevision: main
-    ref: values
+    ref: myGitOpsRepoRoot
 
 
   destination:
