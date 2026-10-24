@@ -49,8 +49,9 @@ the cluster is currently healthy.
 
 ## Scope and status
 
-Recommendation is the custom-image delivery focus. Custom Product Catalog and
-Ad service work is deferred as described in the operations guide; this does not
+Recommendation currently has the active custom-image override. Product Catalog
+and Ad delivery implementation is prepared; activation awaits real ECR images
+and successful release validation as described in the operations guide. This does not
 mean the upstream chart's corresponding services are necessarily disabled.
 
 Infrastructure, IAM, ECR, and platform components are managed outside this
