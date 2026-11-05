@@ -3,11 +3,11 @@
 Detailed setup, operating procedures, and implementation notes.
 Return to the [project overview](../README.md).
 
-## otel-demo-gitops
+## otel-demo-gitops-aws
 
 ## Overview
 
-`otel-demo-gitops` is the GitOps repository for the OpenTelemetry Demo Kubernetes deployment running on Amazon EKS.
+`otel-demo-gitops-aws` is the GitOps repository for the OpenTelemetry Demo Kubernetes deployment running on Amazon EKS.
 
 This repository defines the **desired state** of Kubernetes applications.
 
@@ -26,7 +26,7 @@ This repository is AWS-only:
 - no local kind cluster watches this repository.
 
 The standalone local environment keeps its desired state in the separate
-`otel-demo-gitops-local` repository. Local values and Gateway resources should
+`otel-demo-gitops-kind` repository. Local values and Gateway resources should
 not be added here.
 
 ---
@@ -44,7 +44,7 @@ not be added here.
 ┌─────────────────────────────┐
 │ GitHub Repository           │
 │                             │
-│ otel-demo-gitops              │
+│ otel-demo-gitops-aws              │
 │                             │
 │ Argo CD manifests           │
 │ Helm values                 │
@@ -72,7 +72,7 @@ not be added here.
 ## Repository Structure
 
 ```
-otel-demo-gitops/
+otel-demo-gitops-aws/
 ├── argocd/
 │   └── applications/
 │       └── otel-demo.yaml
@@ -156,7 +156,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 
 metadata:
-  name: otel-demo
+  name: otel-demo-aws
   namespace: argocd
 
 spec:
@@ -402,7 +402,7 @@ systems:
    matches the application commit SHA.
 
 This AWS audit trail is separate from the local one: no local release should
-create a commit in `otel-demo-gitops`.
+create a commit in `otel-demo-gitops-aws`.
 
 ---
 
