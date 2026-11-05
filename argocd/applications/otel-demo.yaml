@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 
 metadata:
-  name: otel-demo
+  name: otel-demo-aws
   namespace: argocd
 
 spec:
@@ -16,11 +16,12 @@ spec:
     targetRevision: 0.38.4
 
     helm:
+      releaseName: otel-demo
       valueFiles:
         - $values/applications/otel-demo/values.yaml
 
 
-  - repoURL: https://github.com/lackito/otel-demo-gitops.git
+  - repoURL: https://github.com/lackito/otel-demo-gitops-aws.git
     targetRevision: main
     ref: values
 

@@ -1,4 +1,4 @@
-# OpenTelemetry Demo GitOps on Amazon EKS
+# otel-demo-gitops-aws
 
 AWS application desired state for a platform engineering lab using **Amazon EKS,
 Argo CD, Helm, and Amazon ECR**. Argo CD combines the upstream OpenTelemetry Demo
@@ -49,16 +49,21 @@ the cluster is currently healthy.
 
 ## Scope and status
 
-Recommendation is the custom-image delivery focus. Custom Product Catalog and
-Ad service work is deferred as described in the operations guide; this does not
+Recommendation currently has the active custom-image override. Product Catalog
+and Ad delivery implementation is prepared; activation awaits real ECR images
+and successful release validation as described in the operations guide. This does not
 mean the upstream chart's corresponding services are necessarily disabled.
 
 Infrastructure, IAM, ECR, and platform components are managed outside this
 repository. Local Kubernetes values belong in
-[otel-demo-gitops-local](https://github.com/lackito/otel-demo-gitops-local).
+[otel-demo-gitops-kind](https://github.com/lackito/otel-demo-gitops-kind).
 
 ## Explore the full project
 
-- [Local Kubernetes platform](https://github.com/lackito/otel-demo-local): cluster lifecycle, platform Terraform, and validation scripts.
-- [AWS and local walkthrough](https://github.com/lackito/otel-demo-local/blob/main/docs/PROJECT_WALKTHROUGH.md): delivery paths and ownership boundaries.
+- [Local Kubernetes platform](https://github.com/lackito/otel-demo-infra-kind): cluster lifecycle, platform Terraform, and validation scripts.
+- [AWS and local walkthrough](https://github.com/lackito/otel-demo-infra-kind/blob/main/docs/PROJECT_WALKTHROUGH.md): delivery paths and ownership boundaries.
 - [Operations guide](docs/OPERATIONS.md): detailed AWS GitOps reference and future improvements.
+
+## Environment naming
+
+See the shared [naming and migration guide](https://github.com/lackito/otel-demo-apps/blob/main/docs/NAMING.md) for repository names, runtime identities, and the coordinated rename sequence.

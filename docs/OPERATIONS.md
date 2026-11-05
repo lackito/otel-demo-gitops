@@ -3,11 +3,11 @@
 Detailed setup, operating procedures, and implementation notes.
 Return to the [project overview](../README.md).
 
-## otel-demo-gitops
+## otel-demo-gitops-aws
 
 ## Overview
 
-`otel-demo-gitops` is the GitOps repository for the OpenTelemetry Demo Kubernetes deployment running on Amazon EKS.
+`otel-demo-gitops-aws` is the GitOps repository for the OpenTelemetry Demo Kubernetes deployment running on Amazon EKS.
 
 This repository defines the **desired state** of Kubernetes applications.
 
@@ -26,7 +26,7 @@ This repository is AWS-only:
 - no local kind cluster watches this repository.
 
 The standalone local environment keeps its desired state in the separate
-`otel-demo-gitops-local` repository. Local values and Gateway resources should
+`otel-demo-gitops-kind` repository. Local values and Gateway resources should
 not be added here.
 
 ---
@@ -44,7 +44,7 @@ not be added here.
 ┌─────────────────────────────┐
 │ GitHub Repository           │
 │                             │
-│ otel-demo-gitops              │
+│ otel-demo-gitops-aws              │
 │                             │
 │ Argo CD manifests           │
 │ Helm values                 │
@@ -72,7 +72,7 @@ not be added here.
 ## Repository Structure
 
 ```
-otel-demo-gitops/
+otel-demo-gitops-aws/
 ├── argocd/
 │   └── applications/
 │       └── otel-demo.yaml
@@ -156,7 +156,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 
 metadata:
-  name: otel-demo
+  name: otel-demo-aws
   namespace: argocd
 
 spec:
@@ -238,43 +238,40 @@ Example image:
 
 ---
 
-## Deferred Applications
+## Product Catalog and Ad delivery readiness
 
-## Product Catalog
+Implementation is prepared in `otel-demo-apps`; ECR repositories and scoped
+publisher roles are prepared in infrastructure layer 04. This is not a record
+of publication or deployment. Only Recommendation currently has a custom
+image override in active values.
 
-The Product Catalog service is currently deferred.
+Chart **0.38.4 remains pinned**. Product Catalog uses the chart's existing
+`product-catalog-products` ConfigMap mounted at `/usr/src/app/products`, with
+atomic JSON reloads. No PostgreSQL or chart upgrade is part of this work.
+Ad's missing protobuf build input and Java agent version are supplied in the
+application repository, with provenance and license retained.
 
-Reason:
+Before activation, apply the reviewed layer-04 plan, configure the GitOps token,
+and complete application CI. Merging the release changes to apps main can
+publish and promote images, so schedule that merge as a release action.
+Each new service's workflow publishes a full-SHA ECR image, pulls and smoke-tests
+it, then adds only `components.product-catalog.imageOverride` or
+`components.ad.imageOverride`. Concurrent promotions use fetch/replay retries
+and ordinary non-force pushes. Do not add example image references here.
 
-The course implementation and the OpenTelemetry Demo implementation use different architectures.
+After promotion, observe Argo CD sync/health and Deployment rollouts; confirm
+pod image digests match ECR and exercise catalog list/get/search and ads.
+Check gRPC health plus traces, metrics, and logs, and record timestamps,
+workflow run links, source SHAs, ECR digests, and observed cluster results.
+Local container tests and Helm rendering alone do not establish EKS health.
 
-The course version uses:
+Rollback only the affected override to a previously verified SHA. Removing
+its override restores the pinned chart's default image. Preserve unrelated
+promotions. Full build, release, trust, and verification instructions are in
+`otel-demo-apps/DELIVERY.md`.
 
-```
-products/products.json
-```
-
-The OpenTelemetry Demo version expects:
-
-```
-PostgreSQL-backed product catalog
-```
-
-Decision:
-
-Do not deploy Product Catalog until the implementation matches the target architecture.
-
----
-
-## Ad Service
-
-The Ad service is also deferred.
-
-Current focus:
-
-1. Recommendation service
-2. CI/CD automation
-3. GitOps workflow validation
+The existing disabled-OpenSearch/default-Collector-log-exporter mismatch is
+separate and remains unresolved; verify downstream log storage independently.
 
 ---
 
@@ -405,7 +402,7 @@ systems:
    matches the application commit SHA.
 
 This AWS audit trail is separate from the local one: no local release should
-create a commit in `otel-demo-gitops`.
+create a commit in `otel-demo-gitops-aws`.
 
 ---
 
