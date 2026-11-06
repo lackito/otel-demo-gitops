@@ -24,3 +24,7 @@ components:
     imageOverride:
       repository: 650032249451.dkr.ecr.us-east-1.amazonaws.com/ad
       tag: 1adee5472a279ebd84b69addfc4c6f7629bf38e6
+  product-catalog:
+    imageOverride:
+      repository: 650032249451.dkr.ecr.us-east-1.amazonaws.com/product-catalog
+      tag: 1adee5472a279ebd84b69addfc4c6f7629bf38e6
