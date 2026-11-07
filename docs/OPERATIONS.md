@@ -38,7 +38,7 @@ for workflow inputs and credentials.
 Run from `otel-demo-infra-aws`:
 
 ```bash
-aws-vault exec admin -- make application-validate
+make application-validate
 ```
 
 For Ad, Product Catalog, and Recommendation, compare:

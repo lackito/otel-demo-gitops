@@ -28,7 +28,7 @@ self-healing.
 All three custom services use ECR: **Ad, Product Catalog, and Recommendation**.
 Verify the release SHA, ECR platform digest, GitOps commit, Argo CD revision,
 and deployed image. From the infrastructure repository, run
-`aws-vault exec admin -- make application-validate` for the deployment summary.
+`make application-validate` for the deployment summary.
 
 ## Telemetry and lifecycle
 
