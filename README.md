@@ -1,79 +1,49 @@
 # otel-demo-gitops-aws
 
-AWS application desired state for a platform engineering lab using **Amazon EKS,
-Argo CD, Helm, and Amazon ECR**. Argo CD combines the upstream OpenTelemetry Demo
-Helm chart with this repository's environment-specific values and reconciles
-the resulting Kubernetes workloads.
+AWS desired state for the [OpenTelemetry Demo](https://opentelemetry.io/docs/demo/).
+Argo CD combines the upstream Helm chart with these values and reconciles the
+workloads on EKS.
 
-## Engineering focus
+## Files and ownership
 
-The application is the upstream OpenTelemetry Demo. This repository demonstrates
-how to deliver and configure it through GitOps:
+| File | Purpose |
+| --- | --- |
+| [Application](argocd/applications/otel-demo.yaml) | Chart version, values source, destination, and sync policy |
+| [Helm values](applications/otel-demo/values.yaml) | AWS settings and Ad, Product Catalog, and Recommendation ECR overrides |
+| [Operations](docs/OPERATIONS.md) | Release verification, troubleshooting, and teardown |
 
-- A multi-source Argo CD Application separates the upstream chart from AWS values.
-- The Recommendation image override supports independent application releases.
-- Automated synchronization enables pruning and self-healing.
-- AWS desired state is isolated from the local kind environment.
-- Terraform registers the Application; Argo CD owns its workloads.
+[otel-demo-infra-aws](https://github.com/lackito/otel-demo-infra-aws) provisions
+EKS, installs Argo CD, and registers the Application through Terraform.
+[otel-demo-apps](https://github.com/lackito/otel-demo-apps) owns application source
+and release workflows. This repository owns AWS application configuration.
 
-## Delivery architecture
+## Releases
 
-```mermaid
-flowchart LR
-    A[Application source] --> B[GitHub Actions]
-    B --> C[Amazon ECR]
-    B --> D[GitOps values commit]
-    D --> E[Argo CD]
-    H[Upstream Helm chart] --> E
-    C --> F[EKS workloads]
-    E --> F
-    G[Terraform Application registration] --> E
-```
+Each custom service has its own AWS workflow. A qualifying change on
+`otel-demo-apps/main` builds and smoke-tests that service, publishes an immutable
+full-SHA image to ECR, and updates its image override here. Argo CD watches
+`main` and deploys the pushed values change with automated sync, pruning, and
+self-healing.
 
-Application code and release workflows live in [otel-demo-apps](https://github.com/lackito/otel-demo-apps). AWS
-provisioning and platform setup live in [otel-demo-infra-aws](https://github.com/lackito/otel-demo-infra-aws).
+All three custom services use ECR: **Ad, Product Catalog, and Recommendation**.
+Verify the release SHA, ECR platform digest, GitOps commit, Argo CD revision,
+and deployed image. From the infrastructure repository, run
+`aws-vault exec admin -- make application-validate` for the deployment summary.
 
-## Inspect the implementation
+## Telemetry and lifecycle
 
-| File | What it demonstrates |
-|---|---|
-| [Argo CD Application](argocd/applications/otel-demo.yaml) | Multi-source chart and values configuration, destination, and sync policy |
-| [Helm values](applications/otel-demo/values.yaml) | Observability settings and the Recommendation ECR image override |
-| [Operations guide](docs/OPERATIONS.md) | Setup dependencies, synchronization, release verification, and ownership boundaries |
+Jaeger and Prometheus are enabled. OpenSearch is disabled in the current AWS
+values, while the chart log exporter still targets it; stored logs need further
+configuration. Container stdout remains available through `kubectl logs`.
 
-The committed values use a commit-shaped image tag for Recommendation. The
-operations guide describes the GitHub Actions → ECR → GitOps update workflow.
-To verify a particular release, match its workflow run, generated GitOps commit,
-Argo CD revision, and deployed image. Configuration alone does not prove that
-the cluster is currently healthy.
+The Application includes Argo CD's cascading-deletion finalizer, matching its
+Terraform registration. Destroy layer 04 while Argo CD is running, then 03 and
+02. The disposable dev ECR repositories delete their stored images during
+Terraform destroy. Republish all three images after rebuilding.
 
-## Scope and status
+## Related guides
 
-Recommendation currently has the active custom-image override. Product Catalog
-and Ad delivery implementation is prepared; activation awaits real ECR images
-and successful release validation as described in the operations guide. This does not
-mean the upstream chart's corresponding services are necessarily disabled.
-
-Infrastructure, IAM, ECR, and platform components are managed outside this
-repository. Local Kubernetes values belong in
-[otel-demo-gitops-kind](https://github.com/lackito/otel-demo-gitops-kind).
-
-## Explore the full project
-
-- [Local Kubernetes platform](https://github.com/lackito/otel-demo-infra-kind): cluster lifecycle, platform Terraform, and validation scripts.
-- [AWS and local walkthrough](https://github.com/lackito/otel-demo-infra-kind/blob/main/docs/PROJECT_WALKTHROUGH.md): delivery paths and ownership boundaries.
-- [Operations guide](docs/OPERATIONS.md): detailed AWS GitOps reference and future improvements.
-
-## Environment naming
-
-See the shared [naming and migration guide](https://github.com/lackito/otel-demo-apps/blob/main/docs/NAMING.md) for repository names, runtime identities, and the coordinated rename sequence.
-
-## Application deletion
-
-The declarative Application includes Argo CD's foreground cascading-deletion
-finalizer, matching its Terraform registration. With this setting applied,
-layer-04 `terraform destroy` removes the Application and lets Argo clean up its
-managed demo resources. Keep Argo CD installed until layer 04 finishes.
-Then tear down platform layer 03 and infrastructure layer 02. Existing
-Applications need the updated metadata applied before deletion; the YAML file
-alone does not change a live Application.
+- [AWS operations](https://github.com/lackito/otel-demo-infra-aws/blob/main/docs/OPERATIONS.md)
+- [Branching](https://github.com/lackito/otel-demo-apps/blob/main/docs/BRANCHING.md)
+- [Names and repositories](https://github.com/lackito/otel-demo-apps/blob/main/docs/NAMING.md)
+- [kind desired state](https://github.com/lackito/otel-demo-gitops-kind)
