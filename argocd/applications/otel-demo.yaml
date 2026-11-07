@@ -4,6 +4,8 @@ kind: Application
 metadata:
   name: otel-demo-aws
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 
 spec:
 
