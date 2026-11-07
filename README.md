@@ -67,3 +67,13 @@ repository. Local Kubernetes values belong in
 ## Environment naming
 
 See the shared [naming and migration guide](https://github.com/lackito/otel-demo-apps/blob/main/docs/NAMING.md) for repository names, runtime identities, and the coordinated rename sequence.
+
+## Application deletion
+
+The declarative Application includes Argo CD's foreground cascading-deletion
+finalizer, matching its Terraform registration. With this setting applied,
+layer-04 `terraform destroy` removes the Application and lets Argo clean up its
+managed demo resources. Keep Argo CD installed until layer 04 finishes.
+Then tear down platform layer 03 and infrastructure layer 02. Existing
+Applications need the updated metadata applied before deletion; the YAML file
+alone does not change a live Application.
