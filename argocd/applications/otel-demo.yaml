@@ -15,7 +15,7 @@ spec:
 
   - repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
     chart: opentelemetry-demo
-    targetRevision: 0.38.4
+    targetRevision: 0.42.6
 
     helm:
       releaseName: otel-demo
