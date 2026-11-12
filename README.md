@@ -9,7 +9,7 @@ workloads on EKS.
 | File | Purpose |
 | --- | --- |
 | [Application](argocd/applications/otel-demo.yaml) | Chart version, values source, destination, and sync policy |
-| [Helm values](applications/otel-demo/values.yaml) | AWS settings and Ad, Product Catalog, and Recommendation ECR overrides |
+| [Helm values](applications/otel-demo/values.yaml) | AWS settings for the upstream baseline |
 | [Operations](docs/OPERATIONS.md) | Release verification, troubleshooting, and teardown |
 
 [otel-demo-infra-aws](https://github.com/lackito/otel-demo-infra-aws) provisions
@@ -19,16 +19,10 @@ and release workflows. This repository owns AWS application configuration.
 
 ## Releases
 
-Each custom service has its own AWS workflow. A qualifying change on
-`otel-demo-apps/main` builds and smoke-tests that service, publishes an immutable
-full-SHA image to ECR, and updates its image override here. Argo CD watches
-`main` and deploys the pushed values change with automated sync, pruning, and
-self-healing.
-
-All three custom services use ECR: **Ad, Product Catalog, and Recommendation**.
-Verify the release SHA, ECR platform digest, GitOps commit, Argo CD revision,
-and deployed image. From the infrastructure repository, run
-`make application-validate` for the deployment summary.
+Chart `0.42.6` supplies the upstream `3.1.0` images for Ad, Product Catalog,
+and Recommendation. Keep custom image publishing disabled while verifying
+this baseline. Reintroduce each service separately using the release workflow
+in the operations guide.
 
 ## Telemetry and lifecycle
 
@@ -39,7 +33,7 @@ configuration. Container stdout remains available through `kubectl logs`.
 The Application includes Argo CD's cascading-deletion finalizer, matching its
 Terraform registration. Destroy layer 04 while Argo CD is running, then 03 and
 02. The disposable dev ECR repositories delete their stored images during
-Terraform destroy. Republish all three images after rebuilding.
+Terraform destroy. Republish custom images when reintroducing those services.
 
 ## Related guides
 

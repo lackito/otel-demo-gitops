@@ -11,12 +11,11 @@ Terraform layer 04 registers the Application. Keep its source configuration and
 the declarative [Application YAML](../argocd/applications/otel-demo.yaml) aligned
 when changing chart version, sources, destination, sync policy, or finalizers.
 
-Ad, Product Catalog, and Recommendation each have a custom ECR override under
-`components.<service>.imageOverride`. Other workloads use chart defaults unless
-explicitly overridden. Application changes belong in `otel-demo-apps`; values
-changes belong here. Commit and push values changes so Argo CD can see them.
+Ad, Product Catalog, and Recommendation use the chart images during baseline
+verification. Keep `AWS_RELEASES_ENABLED=false` in the apps repository during
+this stage so its release workflows do not restore the ECR overrides.
 
-## Release a custom service
+## Release a custom service after baseline verification
 
 1. Provision AWS layers 02 → 03 → 04 and inspect the publisher role outputs.
 2. In `otel-demo-apps`, configure `AWS_GITOPS_REPOSITORY_TOKEN` with Contents read/write access to this repository and set `AWS_RELEASES_ENABLED=true`.
